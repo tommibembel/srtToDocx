@@ -2,3 +2,4 @@
 /srt_to_docx.spec
 /build/
 /.idea/
+/__pycache__/
