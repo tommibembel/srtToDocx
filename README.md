@@ -1,4 +1,4 @@
-# srtToDocx
+# srt_to_docx
 Converter for srt files into docx
 
 A python written converter to create docx files for Microsoft Word out of srt files.
