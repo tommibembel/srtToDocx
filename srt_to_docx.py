@@ -28,7 +28,18 @@ def write_config(cf, conf):
         conf.write(configfile)
 
 
-cf = "converter_config.ini"
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
+cf = "srt_to_docx_config.ini"
 config = check_configfile_exists(cf)
 customtkinter.set_appearance_mode(config["Main"]["Appearance"])  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme(config["Main"]["Color"])  # Themes: "blue" (standard), "green", "dark-blue"
@@ -44,7 +55,7 @@ class App(customtkinter.CTk):
         self.geometry(f"{800}x{400}")
         self.minsize(800,400)
         self.resizable(True, True)
-        self.iconbitmap("icon.ico")
+        self.iconbitmap(resource_path("icon.ico"))
 
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)

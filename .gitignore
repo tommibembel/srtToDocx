@@ -3,3 +3,4 @@
 /build/
 /.idea/
 /__pycache__/
+/dist/converter_config.ini
