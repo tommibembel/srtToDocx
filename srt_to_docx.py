@@ -44,7 +44,7 @@ class App(customtkinter.CTk):
         self.geometry(f"{800}x{400}")
         self.minsize(800,400)
         self.resizable(True, True)
-        self.iconbitmap("assets/icon.ico")
+        self.iconbitmap("icon.ico")
 
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
