@@ -9,7 +9,7 @@ from docx.oxml import parse_xml
 from docx.enum.table import WD_TABLE_ALIGNMENT
 
 
-def newconvert(inputfile, outputfile):
+def convert(inputfile, outputfile):
         if inputfile.endswith('.srt'):
             f = io.open(inputfile, encoding="utf-8-sig", mode="r")
             timeRE = re.compile(r'\d{2}:\d{2}:\d{2},\d{3} --> \d{2}:\d{2}:\d{2},\d{3}')

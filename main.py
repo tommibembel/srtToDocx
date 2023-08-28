@@ -30,7 +30,6 @@ def write_config(cf, conf):
 
 cf = "converter_config.ini"
 config = check_configfile_exists(cf)
-print(config)
 customtkinter.set_appearance_mode(config["Main"]["Appearance"])  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme(config["Main"]["Color"])  # Themes: "blue" (standard), "green", "dark-blue"
 customtkinter.set_widget_scaling(int(config["Main"]["UIScale"].replace("%", "")) / 100)
@@ -140,12 +139,12 @@ class App(customtkinter.CTk):
         if self.inputFileEntry.get() == "" or self.outputFileEntry.get() == "":
             self.set_status_label(1, "Please set input and output file")
         else:
-            functions.newconvert(self.inputFileEntry.get(), self.outputFileEntry.get())
+            functions.convert(self.inputFileEntry.get(), self.outputFileEntry.get())
             if self.openAfterConvertLabel_switch.get() == "on":
                 if sys.platform == "darwin":
                     os.system("open \"%s\"" %self.outputFileEntry.get())
-                elif sys.platform == "linux":
-                    os.startfile("%s" % self.outputFileEntry.get())
+                #elif sys.platform == "linux":      #Don't know how linux opens a docx file ;) so this should be adapted
+                #    os.startfile("%s" % self.outputFileEntry.get())
                 else:
                     os.startfile("%s" % self.outputFileEntry.get())
 
@@ -153,7 +152,7 @@ class App(customtkinter.CTk):
             self.outputFileEntry.delete(0, len(self.outputFileEntry.get()))
             self.set_status_label(0)
 
-    def set_status_label(self, status, message="Conversion successfull"):
+    def set_status_label(self, status, message="Conversion successfully"):
         if status == 0:
             self.statusLabel.configure(text=message, bg_color="green")
         elif status == 1:
