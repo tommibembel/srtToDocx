@@ -41,7 +41,7 @@ def newconvert(inputfile, outputfile):
                 result[int(key)] = (
                 dtStart.strftime("%H:%M:%S,%f")[:-3], dtEnd.strftime("%H:%M:%S,%f")[:-3], str(dtDur)[:-3], subtitle)
 
-            print(result)
+            #print(result)
 
             document = docx.Document()
             table = document.add_table(rows=1, cols=5, style='Table Grid')
