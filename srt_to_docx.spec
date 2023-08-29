@@ -8,7 +8,7 @@ a = Analysis(
     ['srt_to_docx.py'],
     pathex=[],
     binaries=[],
-    datas=[('.\\assets\\icon.ico', '.\\assets'), ('.\\assets\\github-mark.png', '.\\assets'), ('.\\assets\\github-mark-white.png', '.\\assets')],
+    datas=[('.\\assets\\icon.ico', '.\\assets'), ('.\\assets\\github-mark.png', '.\\assets'), ('.\\assets\\github-mark-white.png', '.\\assets'), ('.\\assets\\bt_logo-white.png', '.\\assets'), ('.\\assets\\bt_logo.png', '.\\assets')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
