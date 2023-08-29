@@ -8,7 +8,7 @@ a = Analysis(
     ['srt_to_docx.py'],
     pathex=[],
     binaries=[],
-    datas=[('icon.ico', '.')],
+    datas=[('.\\assets\\icon.ico', '.\\assets'), ('.\\assets\\github-mark.png', '.\\assets'), ('.\\assets\\github-mark-white.png', '.\\assets')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -41,5 +41,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['icon.ico'],
+    icon=['assets\\icon.ico'],
 )

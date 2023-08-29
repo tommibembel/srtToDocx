@@ -3,6 +3,9 @@ import sys
 import customtkinter
 import functions
 import configparser
+import webbrowser
+from PIL import Image
+
 
 
 def check_configfile_exists(cf):
@@ -52,10 +55,10 @@ class App(customtkinter.CTk):
 
         # configure window
         self.title("srt to docx converter")
-        self.geometry(f"{800}x{400}")
-        self.minsize(800,400)
+        self.geometry(f"{800}x{500}")
+        self.minsize(800,500)
         self.resizable(True, True)
-        self.iconbitmap(resource_path("icon.ico"))
+        self.iconbitmap(resource_path("assets/icon.ico"))
 
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
@@ -68,6 +71,13 @@ class App(customtkinter.CTk):
         self.sidebar_frame.grid_rowconfigure(1, weight=1)
         self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="Options", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
+
+        self.gitlogo = customtkinter.CTkImage(light_image=Image.open(resource_path("assets/github-mark.png")),
+                                             dark_image=Image.open(resource_path("assets/github-mark-white.png")),
+                                             size=(30,30))
+        self.gitlabel = customtkinter.CTkLabel(self.sidebar_frame, image=self.gitlogo, text="")
+        self.gitlabel.grid(row=9, column=0, padx=20, pady=(20,20), sticky="w")
+        self.gitlabel.bind(sequence="<Button-1>", command=self.open_github)
 
         openFileSwitchVar = customtkinter.StringVar(value="on")
         self.openAfterConvertLabel_switch = customtkinter.CTkSwitch(self.sidebar_frame, text="Open converted file",
@@ -122,6 +132,11 @@ class App(customtkinter.CTk):
         self.color_mode_optionmenu.set(config["Main"]["Color"])
 
         self.popupWindow = None
+
+
+    def open_github(self, *args):
+        webbrowser.open_new_tab("https://github.com/tommibembel/srtToDocx")
+
     def open_file_dialog_event(self):
         self.set_status_label(2)
         file = customtkinter.filedialog.askopenfilename(initialdir=os.path.expanduser('~/Documents'),
