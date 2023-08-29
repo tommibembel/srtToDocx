@@ -79,6 +79,13 @@ class App(customtkinter.CTk):
         self.gitlabel.grid(row=9, column=0, padx=20, pady=(20,20), sticky="w")
         self.gitlabel.bind(sequence="<Button-1>", command=self.open_github)
 
+        self.btlogo = customtkinter.CTkImage(light_image=Image.open(resource_path("assets/bt_logo.png")),
+                                             dark_image=Image.open(resource_path("assets/bt_logo-white.png")),
+                                             size=(30,30))
+        self.btlabel = customtkinter.CTkLabel(self.sidebar_frame, image=self.btlogo, text="")
+        self.btlabel.grid(row=9, column=0, padx=80, pady=(20,20), sticky="w")
+        self.btlabel.bind(sequence="<Button-1>", command=self.open_bt)
+
         openFileSwitchVar = customtkinter.StringVar(value="on")
         self.openAfterConvertLabel_switch = customtkinter.CTkSwitch(self.sidebar_frame, text="Open converted file",
                                                                     variable=openFileSwitchVar,
@@ -133,9 +140,11 @@ class App(customtkinter.CTk):
 
         self.popupWindow = None
 
-
     def open_github(self, *args):
         webbrowser.open_new_tab("https://github.com/tommibembel/srtToDocx")
+
+    def open_bt(self, *args):
+        webbrowser.open_new_tab("https://bendel-translations.de")
 
     def open_file_dialog_event(self):
         self.set_status_label(2)
@@ -166,18 +175,21 @@ class App(customtkinter.CTk):
         if self.inputFileEntry.get() == "" or self.outputFileEntry.get() == "":
             self.set_status_label(1, "Please set input and output file")
         else:
-            functions.convert(self.inputFileEntry.get(), self.outputFileEntry.get())
-            if self.openAfterConvertLabel_switch.get() == "on":
-                if sys.platform == "darwin":
-                    os.system("open \"%s\"" %self.outputFileEntry.get())
-                #elif sys.platform == "linux":      #Don't know how linux opens a docx file ;) so this should be adapted
-                #    os.startfile("%s" % self.outputFileEntry.get())
-                else:
-                    os.startfile("%s" % self.outputFileEntry.get())
+            r = functions.convert(self.inputFileEntry.get(), self.outputFileEntry.get())
+            if r == 0:
+                if self.openAfterConvertLabel_switch.get() == "on":
+                    if sys.platform == "darwin":
+                        os.system("open \"%s\"" %self.outputFileEntry.get())
+                    #elif sys.platform == "linux":      #Don't know how linux opens a docx file ;) so this should be adapted
+                    #    os.startfile("%s" % self.outputFileEntry.get())
+                    else:
+                        os.startfile("%s" % self.outputFileEntry.get())
 
-            self.inputFileEntry.delete(0, len(self.inputFileEntry.get()))
-            self.outputFileEntry.delete(0, len(self.outputFileEntry.get()))
-            self.set_status_label(0)
+                self.inputFileEntry.delete(0, len(self.inputFileEntry.get()))
+                self.outputFileEntry.delete(0, len(self.outputFileEntry.get()))
+                self.set_status_label(0)
+            else:
+                self.set_status_label(1, r)
 
     def set_status_label(self, status, message="Conversion successfully"):
         if status == 0:
