@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['srt_to_docx.py'],
+    ['srt_converter.py'],
     pathex=[],
     binaries=[],
     datas=[('.\\assets\\icon.ico', '.\\assets'), ('.\\assets\\github-mark.png', '.\\assets'), ('.\\assets\\github-mark-white.png', '.\\assets'), ('.\\assets\\bt_logo-white.png', '.\\assets'), ('.\\assets\\bt_logo.png', '.\\assets')],
@@ -28,7 +28,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='srt_to_docx',
+    name='srt_converter',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

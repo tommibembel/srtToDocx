@@ -1,10 +1,11 @@
-# srt_to_docx
-Converter for srt files into docx
+# str converter
+This is a converter for srt files into docx and xlsx files.
 
-A python written converter to create docx files for Microsoft Word out of srt files.
-Converter can be used via console or with the gui.
+It converts a subtitle file in srt format to Microsoft Word or Microsoft Excel
+Converter can be used via console or with the GUI.
 
-If you want to use it via console in python, you only need the functions.py. Be sure you have the required packages mentioned in requirements.txt.
+If you want to use it via console in python, you only need the functions.py. 
+Be sure you have the required packages mentioned in requirements.txt.
 The easy way is to create a virtual env and fulfill the requirements.txt with:  
 `pip install -r requirements.txt`
 

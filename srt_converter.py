@@ -2,63 +2,27 @@ import os
 import sys
 import customtkinter
 import functions
-import configparser
 import webbrowser
 from PIL import Image
 
-
-
-def check_configfile_exists(cf):
-    if os.path.isfile(cf):
-        config = configparser.RawConfigParser()
-        config.read(cf)
-        return config
-    else:
-        config = create_cofig_file(cf)
-        return config
-
-
-def create_cofig_file(cf):
-    config = configparser.RawConfigParser()
-    config['Main'] = {"UIScale": "100%", "Appearance": "System", "Color": "blue"}
-    with open(cf, "w") as configfile:
-        config.write(configfile)
-    return config
-
-
-def write_config(cf, conf):
-    with open(cf, "w") as configfile:
-        conf.write(configfile)
-
-
-def resource_path(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative_path)
-
-
-cf = "srt_to_docx_config.ini"
-config = check_configfile_exists(cf)
+cf = "srt_converter.ini"
+config = functions.check_configfile_exists(cf)
 customtkinter.set_appearance_mode(config["Main"]["Appearance"])  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme(config["Main"]["Color"])  # Themes: "blue" (standard), "green", "dark-blue"
 customtkinter.set_widget_scaling(int(config["Main"]["UIScale"].replace("%", "")) / 100)
 customtkinter.set_window_scaling(int(config["Main"]["UIScale"].replace("%", "")) / 100)
+
 
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
 
         # configure window
-        self.title("srt to docx converter")
-        self.geometry(f"{800}x{500}")
-        self.minsize(800,500)
+        self.title("srt converter")
+        self.geometry(f"{800}x{550}")
+        self.minsize(800,550)
         self.resizable(True, True)
-        self.iconbitmap(resource_path("assets/icon.ico"))
+        self.iconbitmap(functions.resource_path("assets/icon.ico"))
 
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
@@ -72,41 +36,46 @@ class App(customtkinter.CTk):
         self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="Options", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-        self.gitlogo = customtkinter.CTkImage(light_image=Image.open(resource_path("assets/github-mark.png")),
-                                             dark_image=Image.open(resource_path("assets/github-mark-white.png")),
-                                             size=(30,30))
-        self.gitlabel = customtkinter.CTkLabel(self.sidebar_frame, image=self.gitlogo, text="")
-        self.gitlabel.grid(row=9, column=0, padx=20, pady=(20,20), sticky="w")
-        self.gitlabel.bind(sequence="<Button-1>", command=self.open_github)
-
-        self.btlogo = customtkinter.CTkImage(light_image=Image.open(resource_path("assets/bt_logo.png")),
-                                             dark_image=Image.open(resource_path("assets/bt_logo-white.png")),
-                                             size=(30,30))
-        self.btlabel = customtkinter.CTkLabel(self.sidebar_frame, image=self.btlogo, text="")
-        self.btlabel.grid(row=9, column=0, padx=80, pady=(20,20), sticky="w")
-        self.btlabel.bind(sequence="<Button-1>", command=self.open_bt)
-
         openFileSwitchVar = customtkinter.StringVar(value="on")
         self.openAfterConvertLabel_switch = customtkinter.CTkSwitch(self.sidebar_frame, text="Open converted file",
                                                                     variable=openFileSwitchVar,
                                                                     onvalue="on", offvalue="off")
         self.openAfterConvertLabel_switch.grid(row=2, column=0, padx=(20, 20), pady=(20,20))
 
+        self.output_format_label = customtkinter.CTkLabel(self.sidebar_frame, text="Output format:", anchor="w")
+        self.output_format_label.grid(row=3, column=0, padx=(20, 20), pady=(10, 0))
+        self.output_format_optionmenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["docx", "xlsx"],
+                                                                 command=self.change_output_format_event)
+        self.output_format_optionmenu.grid(row=4, column=0, padx=(20, 20), pady=(10, 10))
         self.color_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Color Mode:", anchor="w")
-        self.color_mode_label.grid(row=3, column=0, padx=(20, 20), pady=(10, 0))
+        self.color_mode_label.grid(row=5, column=0, padx=(20, 20), pady=(10, 0))
         self.color_mode_optionmenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["blue", "green", "dark-blue"],
                                                                  command=self.change_color_mode_event)
-        self.color_mode_optionmenu.grid(row=4, column=0, padx=(20, 20), pady=(10, 20))
+        self.color_mode_optionmenu.grid(row=6, column=0, padx=(20, 20), pady=(10, 10))
         self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
-        self.appearance_mode_label.grid(row=5, column=0, padx=(20, 20), pady=(10, 0))
-        self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["Light", "Dark", "System"],
+        self.appearance_mode_label.grid(row=7, column=0, padx=(20, 20), pady=(10, 0))
+        self.appearance_mode_optionmenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["Light", "Dark", "System"],
                                                                        command=self.change_appearance_mode_event)
-        self.appearance_mode_optionemenu.grid(row=6, column=0, padx=20, pady=(10, 10))
+        self.appearance_mode_optionmenu.grid(row=8, column=0, padx=20, pady=(10, 10))
         self.scaling_label = customtkinter.CTkLabel(self.sidebar_frame, text="UI Scaling:", anchor="w")
-        self.scaling_label.grid(row=7, column=0, padx=20, pady=(10, 0))
-        self.scaling_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["80%", "100%", "125%", "150%", "200%"],
+        self.scaling_label.grid(row=9, column=0, padx=20, pady=(10, 0))
+        self.scaling_optionmenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["80%", "100%", "125%", "150%", "200%"],
                                                                command=self.change_scaling_event)
-        self.scaling_optionemenu.grid(row=8, column=0, padx=20, pady=(10, 20))
+        self.scaling_optionmenu.grid(row=10, column=0, padx=20, pady=(10, 10))
+
+        self.gitlogo = customtkinter.CTkImage(light_image=Image.open(functions.resource_path("assets/github-mark.png")),
+                                             dark_image=Image.open(functions.resource_path("assets/github-mark-white.png")),
+                                             size=(30,30))
+        self.gitlabel = customtkinter.CTkLabel(self.sidebar_frame, image=self.gitlogo, text="")
+        self.gitlabel.grid(row=11, column=0, padx=20, pady=(20,20), sticky="w")
+        self.gitlabel.bind(sequence="<Button-1>", command=self.open_github)
+
+        self.btlogo = customtkinter.CTkImage(light_image=Image.open(functions.resource_path("assets/bt_logo.png")),
+                                             dark_image=Image.open(functions.resource_path("assets/bt_logo-white.png")),
+                                             size=(30,30))
+        self.btlabel = customtkinter.CTkLabel(self.sidebar_frame, image=self.btlogo, text="")
+        self.btlabel.grid(row=11, column=0, padx=80, pady=(20,20), sticky="w")
+        self.btlabel.bind(sequence="<Button-1>", command=self.open_bt)
 
         # create input file entry and button
         self.inputFileEntry = customtkinter.CTkEntry(self, placeholder_text="input file path")
@@ -134,10 +103,11 @@ class App(customtkinter.CTk):
         self.statusLabel.grid(row=3, column=1, columnspan=3, padx=(20,20), pady=(20,20), sticky="sew")
 
         # set default values
-        self.appearance_mode_optionemenu.set(config["Main"]["Appearance"])
-        self.scaling_optionemenu.set(config["Main"]["UIScale"])
+        self.appearance_mode_optionmenu.set(config["Main"]["Appearance"])
+        self.scaling_optionmenu.set(config["Main"]["UIScale"])
         self.color_mode_optionmenu.set(config["Main"]["Color"])
-
+        self.output_format_optionmenu.set(config["Main"]["OutputFormat"])
+        self.file_format_filter = eval(config["Formats"][self.output_format_optionmenu.get()])
         self.popupWindow = None
 
     def open_github(self, *args):
@@ -155,15 +125,14 @@ class App(customtkinter.CTk):
             self.inputFileEntry.delete(0, len(self.inputFileEntry.get()))
             self.inputFileEntry.insert(0, file)
             self.outputFileEntry.delete(0, len(self.outputFileEntry.get()))
-            self.outputFileEntry.insert(0, file.replace(".srt", ".docx"))
+            self.outputFileEntry.insert(0, file.replace(".srt", ".%s" % self.output_format_optionmenu.get()))
         else:
             self.inputFileEntry.delete(0, len(self.inputFileEntry.get()))
 
     def save_file_dialog_event(self):
-        self.set_status_label(2)
         file = customtkinter.filedialog.asksaveasfilename(initialdir=os.path.expanduser('~/Documents'),
                                                           initialfile=os.path.basename(self.inputFileEntry.get()).replace(".srt",".docx"),
-                                                          filetypes=(("MS Word", "*.docx"),))
+                                                          filetypes=(self.file_format_filter,))
         if file.endswith('.docx') and file is not None:
             self.outputFileEntry.delete(0, len(self.outputFileEntry.get()))
             self.outputFileEntry.insert(0, file)
@@ -175,15 +144,17 @@ class App(customtkinter.CTk):
         if self.inputFileEntry.get() == "" or self.outputFileEntry.get() == "":
             self.set_status_label(1, "Please set input and output file")
         else:
-            r = functions.convert(self.inputFileEntry.get(), self.outputFileEntry.get())
+            res = functions.parse_srt(self.inputFileEntry.get())
+            if self.output_format_optionmenu.get() == "docx":
+                r = functions.write_docx(self.outputFileEntry.get(), res)
+            if self.output_format_optionmenu.get() == "xlsx":
+                r = functions.write_xlsx(self.outputFileEntry.get(), res)
             if r == 0:
                 if self.openAfterConvertLabel_switch.get() == "on":
                     if sys.platform == "darwin":
-                        os.system("open \"%s\"" %self.outputFileEntry.get())
-                    #elif sys.platform == "linux":      #Don't know how linux opens a docx file ;) so this should be adapted
-                    #    os.startfile("%s" % self.outputFileEntry.get())
+                        os.system("open \"%s\"" % self.outputFileEntry.get())
                     else:
-                        os.startfile("%s" % self.outputFileEntry.get())
+                        os.startfile(self.outputFileEntry.get())
 
                 self.inputFileEntry.delete(0, len(self.inputFileEntry.get()))
                 self.outputFileEntry.delete(0, len(self.outputFileEntry.get()))
@@ -203,12 +174,23 @@ class App(customtkinter.CTk):
         self.set_status_label(2)
         customtkinter.set_appearance_mode(new_appearance_mode)
         config["Main"]["Appearance"] = new_appearance_mode
-        write_config(cf, config)
+        functions.write_config(cf, config)
+
+    def change_output_format_event(self, new_output_format: str):
+        self.set_status_label(2)
+        config["Main"]["OutputFormat"] = new_output_format
+        functions.write_config(cf, config)
+        self.file_format_filter = eval(config["Formats"][self.output_format_optionmenu.get()])
+        tmp = self.outputFileEntry.get()
+        if tmp != "":
+            self.outputFileEntry.delete(0, len(self.outputFileEntry.get()))
+            self.outputFileEntry.insert(0, tmp.replace("." + tmp.rsplit(".")[1],
+                                                   ".%s" % self.output_format_optionmenu.get()))
 
     def change_color_mode_event(self, new_color_mode: str):
         self.set_status_label(2)
         config["Main"]["Color"] = new_color_mode
-        write_config(cf, config)
+        functions.write_config(cf, config)
         self.set_status_label(0, "New color set, program restart required!")
 
     def change_scaling_event(self, new_scaling: str):
@@ -217,7 +199,7 @@ class App(customtkinter.CTk):
         customtkinter.set_widget_scaling(new_scaling_float)
         customtkinter.set_window_scaling(new_scaling_float)
         config["Main"]["UIScale"] = new_scaling
-        write_config(cf, config)
+        functions.write_config(cf, config)
 
 
 if __name__ == "__main__":

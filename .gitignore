@@ -1,7 +1,6 @@
-/converter_config.ini
 /build/
 /.idea/
 /__pycache__/
-/dist/converter_config.ini
-/srt_to_docx_config.ini
 /dist/
+/srt_converter.ini
+/compile.bat
