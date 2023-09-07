@@ -1,4 +1,4 @@
-# str converter
+# srt converter
 This is a converter for srt files into docx and xlsx files.
 
 It converts a subtitle file in srt format to Microsoft Word or Microsoft Excel
